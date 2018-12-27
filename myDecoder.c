@@ -1,3 +1,7 @@
+//
+// Students:
+//Hen Aharon 307887596
+//Chen Yafe 311132427
 #include "myDecoder.h"
 
 char **commandHistory, **environ;

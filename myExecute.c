@@ -318,10 +318,9 @@ int printEnv(char **args){
         printf("Success: no enviorment variables set\n");
         return 1;
     }
-    printf("Success: printing enviorment variables\n> ");
     for(i = 0; i < envsSize; i++){
         strcpy(temp,environ[i]);
-        printf("KEY: %s, VALUE: %s ", environ[i],getenv(temp));
+        printf("KEY: %s, VALUE: %s \n", environ[i],getenv(temp));
     }
     printf("\n");
     return 1;

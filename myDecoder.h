@@ -15,7 +15,7 @@
 
 #define LINEBUFFER 64
 #define COMMAX 128
-#define TOKTOIGNORE " \t\r\n\a"
+#define TOKTOIGNORE "=! \t\r\n\a"
 
 
 extern char** environ; // Environment variables

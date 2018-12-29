@@ -29,7 +29,7 @@ const int (*commsFuncs[])(char **) = {
     };
 //
 
-int myShell_execute(char **args){ // execute al command, CMD commands continue to launch
+int myShell_execute(char **args){ // execute all commands, CMD commands continue to launch
     int i, r = 1, numOfComm;
 
     if (args[0] == NULL)
@@ -66,6 +66,7 @@ int launch(char **args){
     int status, comm = -1, i, lenT,outFD,s;
     char **argv, *newOut = NULL;
     int numOfArgs = argsCount(args);
+    
     //argv for exec()
     argv = (char**)malloc(LINEBUFFER * sizeof(char *));
     //create argv for lanchAndWait
@@ -109,13 +110,13 @@ int launch(char **args){
             strcpy(argv[i-1], args[i]);
         }
         argv[++i] = NULL;
-        lenT = strlen(args[numOfArgs - 1]);
-        newOut = (char*)malloc(sizeof(char) * (lenT + 1));
-        if(newOut == NULL){
-            perror("malloc err in launch()");
-            return 0;
-        }
-        strcpy(newOut, args[numOfArgs - 1]);
+        // lenT = strlen(args[numOfArgs - 1]);
+        // newOut = (char*)malloc(sizeof(char) * (lenT + 1));
+        // if(newOut == NULL){
+        //     perror("malloc err in launch()");
+        //     return 0;
+        // }
+        // strcpy(newOut, args[numOfArgs - 1]);
     }
 
     //OUTPUT redirection
@@ -177,11 +178,7 @@ int launch(char **args){
             myPidsSize++;  
         }
     }
-    int sTmp = argsCount(argv);
-    for(i = 0; i < sTmp; i++){
-        if(argv[i] != NULL) free(argv[i]);
-    }
-    if(argv != NULL) free(argv);
+    freeArgs(argv);
     if(newOut != NULL) free(newOut);
     return 1;
 
@@ -228,19 +225,21 @@ int tasks(char **args){
 // Waiting for proccess to be killed
 int returnPid(char **args){
      if(args[1] == NULL){
-        fprintf(stderr, "no pid for command return\n");
+        fprintf(stderr, "No pid for return command\n");
         return 0;
     }
     char *tmpS;
     int len = strlen(args[1]);
     tmpS = (char*) malloc(sizeof(char) * (len+1));
-    //check
+    //copying pid
     strcpy(tmpS, args[1]);
-    int currPid = HenAtoi(tmpS);
+    int currPid = NewAtoi(tmpS);
     if(currPid == 0){
         printf(" Error:no valid pid for args[1] = %s\n", args[1]);
+        if(tmpS!=NULL) free(tmpS);
         return 0;
     }
+    if(tmpS!=NULL) free(tmpS);
     int i, flag = 0, pidI, status, wpid;
     for(i = 0; i < myPidsSize; i++){
         if(myPids[i] == currPid){
@@ -292,6 +291,7 @@ int setNewEnv(char **args){
     val = (char*)malloc(sizeof(char)*(valLen+1));
     if(val == NULL){
         perror("malloc error in setNewEnv()");
+        if(key!=NULL) free(key);
         return 0;
     }
     strcpy(val, args[2]);
@@ -300,6 +300,7 @@ int setNewEnv(char **args){
     environ[envsSize] = (char*)malloc(sizeof(char)*(keyLen + 1));
     if(val == NULL){
         perror("malloc error in setNewEnv()");
+        if(key!=NULL) free(key);
         return 0;
     }
     strcpy(environ[envsSize], key);
@@ -309,9 +310,13 @@ int setNewEnv(char **args){
     envReturn = setenv(key, val, 1);
     if(envReturn == -1){
         perror("setenv() err");
+        if(key!=NULL) free(key);
+        if(val!=NULL) free(val);
         return 0;
     }
     printf("Success: %s was added with value %s\n", key, val);
+    if(key!=NULL) free(key);
+    if(val!=NULL) free(val);
     return 1;
 }
 int printEnv(char **args){

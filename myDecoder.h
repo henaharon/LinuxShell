@@ -24,13 +24,13 @@
 
 
 extern char** environ; // Environment variables
-extern char **commandHistory; // Commands array 
+extern char **commandHistory; // Commands array
 extern int myPidsSize; // Pids array size
 extern int myPids[COMMAX]; // Pids array
 extern int mappingPidsHistory[COMMAX]; // Mapping Commands and Pids array
 
-
-int HenAtoi(char *s);
+int freeArgs(char **args);
+int NewAtoi(char *s);
 int initArrays();
 char *myShell_read_line(void);
 char **myShell_split_line(char *line);

@@ -9,13 +9,15 @@
 int main(int argc,char **argv)
 {
     char *line, **args, strTmp[2048];
-    int historySize, initFlag, execute=1 ,sTmp,histNum;
-    
+    int historySize, initFlag, execute,sTmp,histNum;
+    line=NULL;
+    execute =1;
+
 
 
     if (initArrays() == 0)
     {
-        printf("  Arrays:allocation error !\n");
+        printf("initArrays:allocation error !\n");
         return 1;
     }
 
@@ -32,16 +34,16 @@ int main(int argc,char **argv)
         //split the line
         strcpy(strTmp, line);
         args = myShell_split_line(strTmp);
-        //
-         // empty line / error 
+
+         // empty line / error
         if(args == NULL){
-            fprintf(stderr, "couldn't splitLine\n");
+            fprintf(stderr, "couldn't split Line\n");
             if(line != NULL) free(line);
             continue;
         }
         // Getting Commands array size
         historySize = argsCount(commandHistory);
-        // if the commend is !(number) ignore
+        // if the commend is !(number) on the beginning ignore it
         if(historySize == 0 && strcmp(args[0],"!") == 0)
         {
             if(line != NULL) free(line);
@@ -50,18 +52,18 @@ int main(int argc,char **argv)
         //save line in history
         commandHistory[historySize] = (char*)malloc(sizeof(char) * (strlen(line)+1));
         if(commandHistory[historySize] == NULL){
-            printf("allocate error : this command won't be added to array\n");
-            free(line);
+            printf("allocate error : commands history\n");
+            if(line != NULL) free(line);
             return 1;
-        } 
-            
-        strcpy(commandHistory[historySize], line);// Copying line 
+        }
+
+        strcpy(commandHistory[historySize], line);// Copying line
         commandHistory[historySize + 1] = NULL; //Advance history array
 
         // "!" command check
         while(strcmp("!", args[0]) == 0){
             histNum = -1;
-            histNum = HenAtoi(args[1]);
+            histNum = NewAtoi(args[1]);
             strcpy(strTmp, commandHistory[histNum]);
             args = myShell_split_line(strTmp);
         }
@@ -75,14 +77,15 @@ int main(int argc,char **argv)
             fprintf(stderr, "myShell_execute() didn't work\n");
         }
 
+        //free memory
         if(line != NULL)    free(line);
-        if(args == NULL){
-            continue;
-        }
-        
-        if(args != NULL){
-            free(args);
-        }
+        //freeArgs(args);
     } while (execute);
+
+    // free **arays
+    freeArgs(commandHistory);
+    freeArgs(environ);
+
+    return 0;
 
 }

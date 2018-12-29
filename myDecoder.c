@@ -8,9 +8,22 @@ char **commandHistory, **environ;
 int myPidsSize, myPids[COMMAX];
 int mappingPidsHistory[COMMAX];
 
-int HenAtoi(char *s){
+
+int freeArgs(char **args){
+	if(args == NULL) return 1;
+	int s = 0, i;
+	s = argsCount(args);
+	for(i = 0; i < s; i++){
+        if(args[i] != NULL) free(args[i]);
+	}
+	if(args != NULL)	free(args);
+	return 1;
+}
+
+
+int NewAtoi(char *s){
 	if(s == NULL){
-		fprintf(stderr, "betterAtoi() empty string\n");
+		fprintf(stderr, "NewAtoi() empty string\n");
 		return 0;
 	}
 	int n = 0;
@@ -65,19 +78,20 @@ char **myShell_split_line(char *line)
 	strcpy(lineCpy, line);
 	if (!tokens)
 	{
-		fprintf(stderr, "splitLine: malloc error\n");
+		fprintf(stderr, "myShell_split_line: malloc error\n");
 		return NULL;
 	}
 	//
 	//key=value
 	while(*lineCpy != '\0'){
 		if(*lineCpy == '=') isEqueal = 1;
-		
+
 		if(*lineCpy == '!') isExcl = 1;
 
 		lineCpy++;
 	}
 	//
+	//if(lineCpy!=NULL) free(lineCpy);
 	//split line
 	token = strtok(line, TOKTOIGNORE);
 	while (token != NULL)
@@ -109,7 +123,7 @@ char **myShell_split_line(char *line)
 		tokens[0] = (char*)malloc(sizeof(char) * 2);
         if (!tokens[0])
         {
-            printf("splitLine: malloc error\n");
+            printf("myShell_split_line: malloc error\n");
             return NULL;
         }
 		strcpy(tokens[0], "=");
@@ -124,7 +138,7 @@ char **myShell_split_line(char *line)
 		tokens[0] = (char*)malloc(sizeof(char) * 2);
         if (!tokens[0])
         {
-            fprintf(stderr, "splitLine: malloc error\n");
+            fprintf(stderr, "myShell_split_line: malloc error\n");
             return NULL;
         }
 		strcpy(tokens[0], "!");
@@ -146,7 +160,7 @@ char **myShell_split_line(char *line)
 		tokens[0] = (char*)malloc(sizeof(char) * 2);
         if (!tokens[0])
         {
-            fprintf(stderr, "splitLine: malloc error\n");
+            fprintf(stderr, "myShell_split_line: malloc error\n");
             return NULL;
         }
 		strcpy(tokens[0], "&");
@@ -165,7 +179,7 @@ char **myShell_split_line(char *line)
 		tokens[0] = (char*)malloc(sizeof(char) * 2);
         if (!tokens[0])
         {
-            printf("splitLine: malloc error\n");
+            printf("myShell_split_line: malloc error\n");
             return NULL;
         }
 		strcpy(tokens[0], ">");
@@ -181,7 +195,7 @@ char **myShell_split_line(char *line)
 		tokens[0] = (char*)malloc(sizeof(char) * 2);
         if (!tokens[0])
         {
-            printf("splitLine: malloc error\n");
+            printf("myShell_split_line: malloc error\n");
             return NULL;
         }
 		strcpy(tokens[0], "l");
@@ -189,7 +203,7 @@ char **myShell_split_line(char *line)
 		tokens[++argsTemp] = NULL;
 		return tokens;
 	}
-    printf("end of splitLine! tokens:\n");
+
 }
 
 
